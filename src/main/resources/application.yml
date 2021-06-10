@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: TRACE
+    com.example.urlly: DEBUG
