@@ -20,10 +20,6 @@ public class ShortenerService {
         this.shortenerRepository = shortenerRepository;
     }
 
-    public String getShortName(String url) {
-        return generateShortName(url);
-    }
-
     public String getUrl(String shortName) {
         Optional<ShortUrl> shortUrl = shortenerRepository.findByHash(shortName);
 
@@ -35,7 +31,7 @@ public class ShortenerService {
         return shortUrl.get().getUrl();
     }
 
-    private String generateShortName(String url) {
+    public String getShortName(String url) {
         Long id = saveShortName(url).getId();
         String shortName = shortNameGenerator.encode(id);
         log.debug("Hash created {}", shortName);
@@ -48,9 +44,9 @@ public class ShortenerService {
 
     private String updateShortName(Long id, String shortName) {
         Optional<ShortUrl> shortUrl = shortenerRepository.findById(id);
-        shortUrl.ifPresent(url -> {
-            url.setHash(shortName);
-            shortenerRepository.save(url);
+        shortUrl.ifPresent(entity -> {
+            entity.setHash(shortName);
+            shortenerRepository.save(entity);
         });
         return shortName;
     }
