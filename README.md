@@ -16,9 +16,14 @@ URL home is at `http://localhost:8080`
 ### To get a shortName
 
 POST a request to the service: 
+
+E.g. 
+
+```
 {
     "url": "http://www.google.com"
 }
+```
 
 ### To redirect to a URL
 
