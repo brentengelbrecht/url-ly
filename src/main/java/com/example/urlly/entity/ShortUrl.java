@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,6 +23,10 @@ public class ShortUrl {
 
     @Column(nullable = false)
     private String url;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private Long numberOfHits = 0L;
+    private String lastReferrerIp;
 
     public ShortUrl() { }
 

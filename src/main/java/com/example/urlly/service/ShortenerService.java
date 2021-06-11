@@ -1,5 +1,6 @@
 package com.example.urlly.service;
 
+import com.example.urlly.domain.InformationDto;
 import com.example.urlly.entity.ShortUrl;
 import com.example.urlly.repository.ShortenerRepository;
 import com.example.urlly.util.ShortNameGenerator;
@@ -20,15 +21,20 @@ public class ShortenerService {
         this.shortenerRepository = shortenerRepository;
     }
 
-    public String getUrl(String shortName) {
-        Optional<ShortUrl> shortUrl = shortenerRepository.findByHash(shortName);
+    public String getUrl(String shortName, String referrerIp) {
+        Optional<ShortUrl> entity = shortenerRepository.findByHash(shortName);
 
-        if (!shortUrl.isPresent()) {
+        if (!entity.isPresent()) {
             throw new IllegalArgumentException("Short name is invalid");
         }
 
-        log.debug("URL found {}", shortUrl.get().getUrl());
-        return shortUrl.get().getUrl();
+        ShortUrl shortUrl = entity.get();
+        shortUrl.setNumberOfHits(shortUrl.getNumberOfHits() + 1);
+        shortUrl.setLastReferrerIp(referrerIp);
+        shortenerRepository.save(shortUrl);
+
+        log.debug("URL found {}", shortUrl.getUrl());
+        return shortUrl.getUrl();
     }
 
     public String getShortName(String url) {
@@ -36,6 +42,25 @@ public class ShortenerService {
         String shortName = shortNameGenerator.encode(id);
         log.debug("Hash created {}", shortName);
         return updateShortName(id, shortName);
+    }
+
+    public InformationDto getInformation(String shortName) {
+        Optional<ShortUrl> entity = shortenerRepository.findByHash(shortName);
+
+        if (!entity.isPresent()) {
+            throw new IllegalArgumentException("Short name is invalid");
+        }
+
+        ShortUrl shortUrl = entity.get();
+
+        InformationDto dto = new InformationDto();
+        dto.setShortName(shortUrl.getHash());
+        dto.setUrl(shortUrl.getUrl());
+        dto.setCreatedAt(shortUrl.getCreatedAt());
+        dto.setLastReferrerIp(shortUrl.getLastReferrerIp());
+        dto.setNumberOfHits(shortUrl.getNumberOfHits());
+
+        return dto;
     }
 
     private ShortUrl saveShortName(String url) {
@@ -46,8 +71,10 @@ public class ShortenerService {
         Optional<ShortUrl> shortUrl = shortenerRepository.findById(id);
         shortUrl.ifPresent(entity -> {
             entity.setHash(shortName);
+            entity.setLastReferrerIp("");
             shortenerRepository.save(entity);
         });
         return shortName;
     }
+
 }

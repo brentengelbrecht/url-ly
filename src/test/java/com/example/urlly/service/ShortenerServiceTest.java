@@ -46,7 +46,7 @@ class ShortenerServiceTest {
 
         Mockito.when(shortenerRepository.findByHash(shortName)).thenReturn(Optional.of(shortUrl));
 
-        String result = shortenerService.getUrl(shortName);
+        String result = shortenerService.getUrl(shortName, "");
 
         assertTrue(expected.equals(result));
     }
@@ -56,7 +56,7 @@ class ShortenerServiceTest {
         String shortName = "x";
 
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            shortenerService.getUrl(shortName);
+            shortenerService.getUrl(shortName, "");
         });
 
         assertTrue(e.getMessage().equals("Short name is invalid"));
