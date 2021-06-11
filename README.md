@@ -27,6 +27,12 @@ E.g.
 
 ### To redirect to a URL
 
-GET a request passing the shortName: 
+Request a GET passing the shortName: 
 
 E.g. http://localhost:8080/g
+
+### To get stats about a shortName
+
+Request a GET passing shortName and `info` keyword
+
+E.g. http://localhost:8080/g/info
